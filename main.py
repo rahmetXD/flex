@@ -88,13 +88,17 @@ async def help(event):
 
 @client.on(events.callbackquery.CallbackQuery(data="start"))
 async def help(event):
-    await event.edit(f"❤️ Merhaba Ben **Lais User Tagger**\n🏷 Gruplarda Kullanıcıları Etiketlemek İçin Tasarlandım. Butonları Kullanarak Botu Yönetebilirsin.", buttons=(                  
-		       
-                       [Button.inline("📚 Komutlar", data="help")],               
-                      [Button.url('📮 Beni Gruba Ekle', f"https://t.me/{bot_username}?startgroup=a")],
-		                  [Button.url(' 👨🏻‍💻 Developers', 'https://t.me/lusttqw')],
-		                  [Button.url('📣 Channel', 'https://t.me/laisbots')],
-
+    await event.edit(f"❤️ Merhaba Ben **Lais User Tagger**\n🏷 Gruplarda Kullanıcıları Etiketlemek İçin Tasarlandım. Butonları Kullanarak Botu Yönetebilirsin.", buttons=(
+                        [
+                            Button.inline("📚 Komutlar", data="help"),
+                        ],
+                        [
+                            Button.url('📮 Beni Gruba Ekle', f"https://t.me/{bot_username}?startgroup=a")
+                        ],
+                        [
+                            Button.url('👨🏻‍💻 Developers', 'https://t.me/lusttqw'),
+                            Button.url('📣 Channel', 'https://t.me/laisbots')
+                        ]
                     ),
                     link_preview=False
                    )
