@@ -11,6 +11,7 @@ from telethon.tl import types
 from telethon import Button
 import asyncio
 import ping3
+import quote
 
 logging.basicConfig(
     level=logging.INFO,
@@ -628,6 +629,451 @@ async def welcome_user(event):
         # Hata durumunda mesaj gönder
         await event.respond(f"Hata oluştu: {str(e)}")
 
+
+@client.on(events.NewMessage(pattern="^/eros$"))
+async def eros_command(event):
+    try:
+        # Sadece özel mesajlarda veya kanallarda çalışmasına izin ver
+        if not (isinstance(event.chat, types.Chat) or isinstance(event.chat, types.Channel)):
+            return await event.respond("Bu komut yalnızca gruplarda ve kanallarda çalışır.")
+
+        # Grup üyelerini al
+        group_participants = await event.client.get_participants(event.chat_id)
+
+        # Botları ve silinmiş hesapları filtrele
+        eligible_users = [user for user in group_participants if not user.bot and not user.deleted]
+
+        # Rasgele iki kullanıcı seç
+        selected_users = random.sample(eligible_users, min(len(eligible_users), 2))
+
+        # Kullanıcıları etiketle
+        tagged_users = [f"[{user.first_name}](tg://user?id={user.id})" for user in selected_users]
+
+        # Sevgi oranını belirle
+        love_percentage = random.randint(1, 100)
+
+        # Mesajı oluştur
+        message = (
+            "💘 Erosun Oku Atıldı !\n"
+            "✦  Gizli Aşıklar :\n\n"
+            f"{tagged_users[0]}  💕  {tagged_users[1]}\n\n"
+            f"💞 Sevgi Oranı : {love_percentage}%"
+        )
+
+        # Mesajı gönder
+        await event.respond(message)
+
+    except Exception as e:
+        # Hata durumunda mesaj gönder
+        await event.respond(f"Hata oluştu: {str(e)}")
+
+
+# Sorular listesi
+sorular = [
+    "Hangi konuda yardıma ihtiyacınız var?",
+    "En sevdiğiniz film nedir?",
+    "Bugün ne yaptınız?",
+    "Bir hedefiniz var mı?",
+    "En sevdiğiniz renk nedir?",
+    "Hangi kitabı okudunuz?",
+    "Güzel bir anınızı paylaşabilir misiniz?",
+    "En sevdiğiniz yemek nedir?",
+    "Hayalinizdeki tatil nereye olurdu?",
+    "Son zamanlarda izlediğiniz en iyi dizi/film nedir?",
+    "Hangi müzik türünü dinlersiniz?",
+    "En sevdiğiniz spor dalı nedir?",
+    "Bir hayvan sahibi misiniz?",
+    "Hangi ülkeleri ziyaret etmek istersiniz?",
+    "En sevdiğiniz meyve nedir?",
+    "Bir süper gücünüz olsaydı, ne olmasını isterdiniz?",
+    "Hangi tarihi kişiyi tanımak isterdiniz?",
+    "En sevdiğiniz içecek nedir?",
+    "Bir sanat eseri yaratmak isteseydiniz, konusu ne olurdu?",
+    "Hangi sporu yapmaktan hoşlanırsınız?",
+    "En sevdiğiniz tatlı nedir?",
+    "Bir dil öğrenmek isteseydiniz, hangisi olurdu?",
+    "Hangi kıyafet tarzını benimsersiniz?",
+    "En sevdiğiniz mevsim nedir?",
+    "Bir şehirde yaşamak mı yoksa kırsalda mı yaşamak isterdiniz?",
+    "Hangi film karakteriyle tanışmak isterdiniz?",
+    "En sevdiğiniz oyun nedir?",
+    "Bir konserde hangi sanatçıyı görmek isterdiniz?",
+    "Hangi tarihi dönemde yaşamak isterdiniz?",
+    "En sevdiğiniz hava durumu nedir?",
+    "Bir restoranda sipariş verirken ne tercih edersiniz?",
+    "Hangi yemekleri yapmayı sever ve iyi yaparsınız?",
+    "En sevdiğiniz renk kombinasyonu nedir?",
+    "Bir kahve dükkanında siparişiniz nedir?",
+    "Hangi kitabı tekrar tekrar okursunuz?",
+    "En sevdiğiniz kış aktivitesi nedir?",
+    "Bir konser veya etkinlik için hangi şehre seyahat ederdiniz?",
+    "Hangi tarihi olaya şahit olmayı isterdiniz?",
+    "En sevdiğiniz çizgi film karakteri kimdir?",
+    "Bir günü nasıl geçirmek isterdiniz?",
+    "Hangi sanat dalında yetenekli olmak isterdiniz?",
+    "En sevdiğiniz korku filmi nedir?",
+    "Bir hayvanın dilini konuşabilseydiniz, hangi hayvanla konuşmak isterdiniz?",
+    "Hangi tür müzik sizi motive eder?",
+    "En sevdiğiniz plaj aktivitesi nedir?",
+    "Bir aktör veya aktris ile bir gün geçirme şansınız olsaydı, kim olurdu?",
+    "Hangi yemek kültürünü daha yakından tanımak istersiniz?",
+    "En sevdiğiniz hobi nedir?",
+    "Bir zaman makinesi olsaydı, hangi döneme gitmek isterdiniz?",
+    "Hangi doğal güzellikleri görmek istersiniz?",
+    "En sevdiğiniz cinsiyet ötesi karakter kimdir?",
+    "Bir süper kahraman gücü seçebilseydiniz, hangisini seçerdiniz?",
+    "Hangi ünlü kişiyi tanımak isterdiniz?",
+    "En sevdiğiniz aktivite nedir?",
+    "Bir şehirde bir gün boyunca neler yapmak isterdiniz?",
+    "Hangi spor takımını desteklersiniz?",
+    "En sevdiğiniz fast food nedir?",
+    "Bir enstrüman çalmak isteseydiniz, hangisini çalardınız?",
+    "Hangi sanat eseri sizi etkiledi?",
+    "En sevdiğiniz manzara nedir?",
+    "Bir keşif yapmak için gitmek istediğiniz yer neresi?",
+    "Hangi festivale katılmak isterdiniz?",
+    "En sevdiğiniz tarih dönemi nedir?",
+    "Bir dil bilseniz, hangisi olurdu?",
+    "Hangi etkinlik sizi rahatlatır?",
+    "En sevdiğiniz şarkı sözü nedir?",
+    "Bir hayvanla konuşabilseydiniz, hangisi olurdu?",
+    "Hangi sanatçının eserlerini seversiniz?",
+    "En sevdiğiniz manzara nedir?",
+    "Bir karakterin hayatını yaşayabilseydiniz, kim olurdu?",
+    "Hangi hayali gerçekleştirmek istersiniz?",
+    "En sevdiğiniz içecek nedir?",
+    "Bir tatil destinasyonu seçme şansınız olsaydı, nereye gitmek isterdiniz?",
+    "Hangi bilgiye sahip olmak isterdiniz?",
+    "En sevdiğiniz kış sporu nedir?",
+    "Bir filmi veya diziyi yeniden yazabilseydiniz, hangisi olurdu?"
+    # ... diğer sorular ...
+]
+
+# Aktif çalışan grupları takip etmek için liste
+anlik_calisan = []
+
+@client.on(events.NewMessage(pattern='^(?i)/cancel'))
+async def cancel(event):
+    global anlik_calisan
+    anlik_calisan.remove(event.chat_id)
+
+@client.on(events.NewMessage(pattern="^/rtag"))
+async def basla_etiketleme(event):
+    global anlik_calisan
+    if event.is_private:
+        return await event.respond("🤚🏻Opss! Bu Komut Sadece Grup Ve Kanallarda Geçerlidir.")
+
+    admins = []
+    async for admin in client.iter_participants(event.chat_id, filter=ChannelParticipantsAdmins):
+        admins.append(admin.id)
+    if not event.sender_id in admins:
+        return await event.respond("🤚🏻Opss! Bu Komut Sadece Yöneticiler Kullanabilir.")
+
+    anlik_calisan.append(event.chat_id)
+    await event.respond("Etiketleme İşlemi Başlatıldı! Biraz bekleyin...")
+
+    usrnum = 0
+    usrtxt = ""
+    async for usr in client.iter_participants(event.chat_id):
+        usrnum += 1
+        soru = random.choice(sorular)
+        usrtxt += f"➪ [{usr.first_name}](tg://user?id={usr.id}), {soru}\n"
+        if event.chat_id not in anlik_calisan:
+            await event.respond("Etiketleme İşlemi Başarıyla Durdurulmuştur!")
+            return
+        if usrnum == 1:
+            await client.send_message(event.chat_id, usrtxt, parse_mode='Markdown')
+            await asyncio.sleep(2)
+            usrnum = 0
+            usrtxt = ""
+
+# Günaydın mesajları listesi
+gunaydin_mesajlari = [
+    "Günaydın! Umarım harika bir gün geçirirsiniz.",
+    "Günaydın dostlar! Bugün size güzellikler getirsin.",
+    "Günaydın herkese! Yeni bir gün, yeni başlangıçlar demektir.",
+    "Sabahın güzelliği üzerinize olsun, günaydın!",
+    "Günaydın sevgili arkadaşlar! Bugün sizin için harika bir gün olacak.",
+    "Günaydın! Hayalinizdeki başarıya bir adım daha yaklaştığınız bir gün olsun.",
+    "Günaydın! Bugünün enerjisi size pozitiflik ve mutluluk getirsin.",
+    "Günaydın herkese! Güzel bir gülümsemeyle gününüzü başlatın.",
+    "Sabahları güne güzel bir gülümsemeyle başlamak, tüm gününüzü aydınlatabilir.",
+    "Günaydın dostlar! Bugünün güzellikleri sizi sarsın.",
+    "Günaydın! Yeni başarılar ve mutluluklar sizi bekliyor.",
+    "Günaydın! Sevdiklerinizle güzel anlar yaşamanız dileğiyle.",
+    "Günaydın! Her anın kıymetini bilin ve keyif alın.",
+    "Günaydın! İyi enerjili bir gün geçirmeniz dileğiyle.",
+    "Günaydın! Bugün kendinize biraz zaman ayırın ve keyif alın.",
+    "Günaydın! Hayatın güzelliklerini keşfetmek için bir gün daha.",
+    "Günaydın! Sevdiklerinizle beraber geçireceğiniz güzel bir gün olsun.",
+    "Günaydın! Hayatta sizi mutlu eden şeylere odaklanın.",
+    "Günaydın dostlar! Güne pozitif enerjiyle başlayın.",
+    "Günaydın! Başarılarınızın devam ettiği bir gün olsun.",
+    "Günaydın! Bugün küçük mutluluklara odaklanın.",
+    "Günaydın herkese! İyi bir gün geçirmeniz dileğiyle.",
+    "Günaydın! Sizi motive eden şeylere odaklanın.",
+    "Günaydın! Bugünün sizin için güzel geçmesini dilerim.",
+    "Günaydın! Kendinize sevgiyle davranın.",
+    "Günaydın! Yeni başlangıçlara hazır olun.",
+    "Günaydın! Sevdiklerinizle geçireceğiniz keyifli anlar sizi bekliyor.",
+    "Günaydın! Bugünün size güzellikler getirmesini dilerim.",
+    "Günaydın! Hayatın tadını çıkarın ve minnettar olun.",
+    "Günaydın! İyi şeylere odaklanın ve olumlu düşünün.",
+    "Günaydın! Bugün sizin için başarılarla dolu olsun.",
+    "Günaydın! İyi enerjiyi içselleştirin ve paylaşın.",
+    "Günaydın! Bugünü özel kılan şeylere odaklanın.",
+    "Günaydın! Yeni fırsatlar ve güzellikler sizleri bekliyor.",
+    "Günaydın! İçsel huzurunuzu bulmanız dileğiyle.",
+    "Günaydın! Kendinize biraz zaman ayırın ve dinlenin.",
+    "Günaydın! Başkalarına gülümseyerek güzel bir gün geçirin.",
+    "Günaydın! Bugün sizin için olumlu değişikliklere gebe.",
+    "Günaydın! Hayatın küçük zevklerinin tadını çıkarın.",
+    "Günaydın! Sevdiklerinizle birlikte geçireceğiniz anların kıymetini bilin.",
+    "Günaydın! Hayallerinizin peşinden koşun ve başarılı olun.",
+    "Günaydın! Bugün sizin için mutlu bir gün olsun.",
+    "Günaydın! Kendinize güvenin ve başarıya odaklanın.",
+    "Günaydın! İyi düşüncelerle güne başlayın ve pozitif enerjiyi yayın.",
+    "Günaydın! Yeni bir gün, yeni bir başlangıç demektir.",
+    "Günaydın! Kendinize sevgiyle bakın ve mutlu olun.",
+    "Günaydın! Bugünün size başarılar getirmesini dilerim.",
+    "Günaydın! Hayatın sürprizlerini keşfetmek için açık olun.",
+    "Günaydın! Sevdiklerinizle birlikte geçireceğiniz anların kıymetini bilin.",
+    "Günaydın! İyi düşüncelerle güne başlayın ve pozitif enerjiyi yayın.",
+    "Günaydın! Yeni bir gün, yeni bir başlangıç demektir.",
+    "Günaydın! Kendinize sevgiyle bakın ve mutlu olun.",
+    "Günaydın! Bugünün size başarılar getirmesini dilerim.",
+    "Günaydın! Hayatın sürprizlerini keşfetmek için açık olun."
+    # ... diğer günaydın mesajları ...
+]
+
+
+# Aktif çalışan grupları takip etmek için liste
+anlik_calisan = []
+
+@client.on(events.NewMessage(pattern='^(?i)/cancel'))
+async def cancel(event):
+    global anlik_calisan
+    anlik_calisan.remove(event.chat_id)
+
+@client.on(events.NewMessage(pattern="^/guntag"))
+async def gunaydin_etiketleme(event):
+    global anlik_calisan
+    if event.is_private:
+        return await event.respond("🤚🏻Opss! Bu Komut Sadece Grup Ve Kanallarda Geçerlidir.")
+
+    admins = []
+    async for admin in client.iter_participants(event.chat_id, filter=ChannelParticipantsAdmins):
+        admins.append(admin.id)
+    if not event.sender_id in admins:
+        return await event.respond("🤚🏻Opss! Bu Komut Sadece Yöneticiler Kullanabilir.")
+
+    anlik_calisan.append(event.chat_id)
+    await event.respond("Guntag İşlemi Başlatıldı! Biraz bekleyin...")
+
+    usrnum = 0
+    usrtxt = ""
+    async for usr in client.iter_participants(event.chat_id):
+        usrnum += 1
+        mesaj = random.choice(gunaydin_mesajlari)
+        usrtxt += f"➪ [{usr.first_name}](tg://user?id={usr.id}), {mesaj}\n"
+        if event.chat_id not in anlik_calisan:
+            await event.respond("Guntag İşlemi Başarıyla Durdurulmuştur!")
+            return
+        if usrnum == 1:
+            await client.send_message(event.chat_id, usrtxt, parse_mode='Markdown')
+            await asyncio.sleep(2)
+            usrnum = 0
+            usrtxt = ""
+
+# İyi geceler mesajları listesi
+iyi_geceler_mesajlari = [
+    "İyi geceler! Tatlı rüyalar dilerim.",
+    "Güzel bir gecenin ardından sizi bekleyen bir sabah olsun.",
+    "İyi geceler dostlar! Huzurlu bir uykuya dalmanız dileğiyle.",
+    "Gecenin sihirli atmosferinde huzur bulun. İyi geceler!",
+    "Uyumadan önce sevdiklerinizi düşünün ve içsel huzuru bulun.",
+    "İyi geceler! Yarın için enerji toplamanız dileğiyle.",
+    "Gecenin sessizliğinde huzur bulun. İyi geceler!",
+    "Rüyalarınız gerçekleşsin. İyi geceler!",
+    "Uykuya dalarken güzel düşüncelerle dolu bir zihinle olun.",
+    "Gecenin siyah örtüsü sizi huzurla sarssın. İyi geceler!",
+    "İyi geceler! Kalbiniz huzur ve sevgiyle dolsun.",
+    "Gecenin huzurunu hissedin ve rahat bir uyku geçirin.",
+    "İyi geceler! Yarın için taze bir başlangıç yapmanız dileğiyle.",
+    "Gecenin yıldızları sizi koruyacak. İyi geceler!",
+    "Uyumadan önce sevdiklerinize iyi dilekler bırakın.",
+    "İyi geceler! Güzel rüyalar sizi beklesin.",
+    "Gecenin sükuneti içinde huzur bulun. İyi geceler!",
+    "Uyumadan önce gününüzü değerlendirin ve minnettar olun.",
+    "İyi geceler! Yarının size güzellikler getirmesini dilerim.",
+    "Gecenin sessizliğinde ruhunuzu dinlendirin. İyi geceler!",
+    "Uykunuzun derin ve huzurlu olması dileğiyle. İyi geceler!",
+    "İyi geceler! Geceyi huzurla geçirmeniz dileğiyle.",
+    "Gecenin yıldızları size rehberlik etsin. İyi geceler!",
+    "Uyumadan önce içsel huzurunuzu bulun. İyi geceler!",
+    "İyi geceler! Yarın için enerji toplamanız dileğiyle.",
+    "Gecenin huzurunu hissedin ve rahat bir uyku geçirin.",
+    "İyi geceler! Kalbiniz huzur ve sevgiyle dolsun.",
+    "Gecenin siyah örtüsü sizi huzurla sarssın. İyi geceler!",
+    "Rüyalarınız gerçekleşsin. İyi geceler!",
+    "Uykuya dalarken güzel düşüncelerle dolu bir zihinle olun.",
+    "Gecenin sessizliğinde huzur bulun. İyi geceler!",
+    "İyi geceler! Tatlı rüyalar dilerim.",
+    "Güzel bir gecenin ardından sizi bekleyen bir sabah olsun.",
+    "İyi geceler dostlar! Huzurlu bir uykuya dalmanız dileğiyle.",
+    "Gecenin sihirli atmosferinde huzur bulun. İyi geceler!",
+    "Uyumadan önce sevdiklerinizi düşünün ve içsel huzuru bulun.",
+    "İyi geceler! Yarın için enerji toplamanız dileğiyle.",
+    "Gecenin sessizliğinde huzur bulun. İyi geceler!",
+    "Rüyalarınız gerçekleşsin. İyi geceler!",
+    "Uykuya dalarken güzel düşüncelerle dolu bir zihinle olun.",
+    "Gecenin siyah örtüsü sizi huzurla sarssın. İyi geceler!",
+    "İyi geceler! Kalbiniz huzur ve sevgiyle dolsun.",
+    "Gecenin huzurunu hissedin ve rahat bir uyku geçirin.",
+    "İyi geceler! Yarın için taze bir başlangıç yapmanız dileğiyle.",
+    "Gecenin yıldızları sizi koruyacak. İyi geceler!",
+    "Uyumadan önce sevdiklerinize iyi dilekler bırakın.",
+    "İyi geceler! Güzel rüyalar sizi beklesin.",
+    "Gecenin sessizliğinde ruhunuzu dinlendirin. İyi geceler!",
+    "Uykunuzun derin ve huzurlu olması dileğiyle. İyi geceler!",
+    "İyi geceler! Geceyi huzurla geçirmeniz dileğiyle.",
+    "Gecenin yıldızları size rehberlik etsin. İyi geceler!",
+    "Uyumadan önce içsel huzurunuzu bulun. İyi geceler!",
+    "İyi geceler! Yarın için enerji toplamanız dileğiyle.",
+    "Gecenin huzurunu hissedin ve rahat bir uyku geçirin.",
+    "İyi geceler! Kalbiniz huzur ve sevgiyle dolsun.",
+    "Gecenin siyah örtüsü sizi huzurla sarssın. İyi geceler!",
+    "Rüyalarınız gerçekleşsin. İyi geceler!",
+    "Uykuya dalarken güzel düşüncelerle dolu bir zihinle olun.",
+    "Gecenin sessizliğinde huzur bulun. İyi geceler!",
+]
+
+
+# Aktif çalışan grupları takip etmek için liste
+anlik_calisan = []
+
+@client.on(events.NewMessage(pattern='^(?i)/cancel'))
+async def cancel(event):
+    global anlik_calisan
+    anlik_calisan.remove(event.chat_id)
+
+@client.on(events.NewMessage(pattern="^/gecetag"))
+async def gunaydin_etiketleme(event):
+    global anlik_calisan
+    if event.is_private:
+        return await event.respond("🤚🏻Opss! Bu Komut Sadece Grup Ve Kanallarda Geçerlidir.")
+
+    admins = []
+    async for admin in client.iter_participants(event.chat_id, filter=ChannelParticipantsAdmins):
+        admins.append(admin.id)
+    if not event.sender_id in admins:
+        return await event.respond("🤚🏻Opss! Bu Komut Sadece Yöneticiler Kullanabilir.")
+
+    anlik_calisan.append(event.chat_id)
+    await event.respond("Guntag İşlemi Başlatıldı! Biraz bekleyin...")
+
+    usrnum = 0
+    usrtxt = ""
+    async for usr in client.iter_participants(event.chat_id):
+        usrnum += 1
+        mesaj = random.choice(iyi_geceler_mesajlari)
+        usrtxt += f"➪ [{usr.first_name}](tg://user?id={usr.id}), {mesaj}\n"
+        if event.chat_id not in anlik_calisan:
+            await event.respond("Guntag İşlemi Başarıyla Durdurulmuştur!")
+            return
+        if usrnum == 1:
+            await client.send_message(event.chat_id, usrtxt, parse_mode='Markdown')
+            await asyncio.sleep(2)
+            usrnum = 0
+            usrtxt = ""
+
+# Random sorular listesi
+random_sorular = [
+    "Nerdesin?",
+    "Nasılsın?",
+    "Napiyorsun?",
+    "Kimlerlesin?",
+    "Neler yapıyorsun?",
+    "Hangi şehirdesin?",
+    "Hangi ülkedesin?",
+    "En son ne yedin?",
+    "En son ne izledin?",
+    "Hangi müzik türünü dinliyorsun?",
+    "Hangi kitabı okuyorsun?",
+    "Hangi aktiviteye meraklısın?",
+    "En son gittiğin yer neresi?",
+    "Hangi konuda konuşmak istersin?",
+    "Bir dilek hakkın olsa, ne dilerdin?",
+    "Hangi hobiyle ilgileniyorsun?",
+    "En sevdiğin renk nedir?",
+    "Bir yetenek kazanma şansın olsa, neyi seçerdin?",
+    "Hayalinizdeki tatil nasıl bir yerde?",
+    "Bir gün boyunca bir ünlü ile değişme şansın olsa, kim olurdu?",
+    "Bir super güç seçme şansın olsa, neyi seçerdin?",
+    "En son ne zaman gülümsedin?",
+    "Hangi sporu yapmayı seversin?",
+    "Hangi konuda uzman olmak istersin?",
+    "Bir film karakteri olma şansın olsa, kim olurdu?",
+    "Hayalindeki ev nasıl bir yerde?",
+    "Hangi tür film/dizi izlemeyi seversin?",
+    "Bir dilek gerçekleşse, ne dilek tutarsın?",
+    "Hangi mevsim seni daha mutlu eder?",
+    "En son hangi şarkıyı dinledin?",
+    "Bir şehirde yaşama şansın olsa, hangi şehri seçerdin?",
+    "Hayalindeki iş nedir?",
+    "En sevdiğin içecek nedir?",
+    "Bir gün boyunca başka birini oynama şansın olsa, kim olurdu?",
+    "Bir yetenek kazanma şansın olsa, neyi seçerdin?",
+    "Bir keşif yapma şansın olsa, nereyi keşfederdin?",
+    "Hangi sanat dalı seni daha çok etkiler?",
+    "En sevdiğin doğa harikası nedir?",
+    "Bir gün boyunca başka bir ülkede yaşama şansın olsa, hangi ülkeyi seçerdin?",
+    "Hangi hayvanı evcil beslemek istersin?",
+    "En son ne zaman bir dostunla güzel bir anı paylaştın?",
+    "Bir gün boyunca hangi aktiviteyi yapmak isterdin?",
+    "Hangi dilde daha iyi olmak isterdin?",
+    "Hangi şey seni motive eder?",
+    "Bir gün boyunca bir kitap karakteri olma şansın olsa, kim olurdu?",
+    "Bir tatil destinasyonu seçme şansın olsa, nereyi seçerdin?",
+]
+
+# Aktif çalışan grupları takip etmek için liste
+anlik_calisan = []
+
+@client.on(events.NewMessage(pattern='^(?i)/cancel'))
+async def cancel(event):
+    global anlik_calisan
+    anlik_calisan.remove(event.chat_id)
+
+@client.on(events.NewMessage(pattern="^/ntag"))
+async def gunaydin_etiketleme(event):
+    global anlik_calisan
+    if event.is_private:
+        return await event.respond("🤚🏻Opss! Bu Komut Sadece Grup Ve Kanallarda Geçerlidir.")
+
+    admins = []
+    async for admin in client.iter_participants(event.chat_id, filter=ChannelParticipantsAdmins):
+        admins.append(admin.id)
+    if not event.sender_id in admins:
+        return await event.respond("🤚🏻Opss! Bu Komut Sadece Yöneticiler Kullanabilir.")
+
+    anlik_calisan.append(event.chat_id)
+    await event.respond("Etiketleme İşlemi Başlatıldı! Biraz bekleyin...")
+
+    usrnum = 0
+    usrtxt = ""
+    async for usr in client.iter_participants(event.chat_id):
+        usrnum += 1
+        mesaj = random.choice(random_sorular)
+        usrtxt += f"➪ [{usr.first_name}](tg://user?id={usr.id}), {mesaj}\n"
+        if event.chat_id not in anlik_calisan:
+            await event.respond("Etiketleme İşlemi Başarıyla Durdurulmuştur!")
+            return
+        if usrnum == 1:
+            await client.send_message(event.chat_id, usrtxt, parse_mode='Markdown')
+            await asyncio.sleep(15)
+            usrnum = 0
+            usrtxt = ""
 
 print("YESSS!, Bot Çalışıyor lexper.")
 client.run_until_disconnected()
