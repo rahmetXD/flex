@@ -50,6 +50,8 @@ async def start(event):
                     buttons=(
                         [
                             Button.inline("📚 Komutlar", data="help"),
+                        ],
+                        [
                             Button.url('📮 Beni Gruba Ekle', f"https://t.me/{bot_username}?startgroup=a")
                         ],
                         [
