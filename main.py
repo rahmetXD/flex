@@ -44,43 +44,19 @@ rxyzdev_tagTot = {}
 rxyzdev_initT = {}
 
 
+
 @client.on(events.NewMessage(pattern="^/start$"))
 async def start(event):
-    # Gönderilecek metin
-    text = "❤️ Merhaba Ben **Lais User Tagger**\n🏷 Gruplarda Kullanıcıları Etiketlemek İçin Tasarlandım. Butonları Kullanarak Botu Yönetebilirsin."
-
-    # Gönderilecek fotoğraf
-    photo_path = "aynen.jpg"
-
-    # Fotoğrafı göndermeden önce server'a yükle
-    photo = await client.upload_file(photo_path)
-
-    # Metni ve fotoğrafı birleştirerek gönder
-    await event.reply(text,
-                      buttons=(
-                          [
-                              Button.inline("📚 Komutlar", data="help"),
-                          ],
-                          [
-                              Button.url('📮 Beni Gruba Ekle', f"https://t.me/{bot_username}?startgroup=a")
-                          ],
-                          [
-                              Button.url('👨🏻‍💻 Developers', 'https://t.me/lusttqw'),
-                              Button.url('📣 Channel', 'https://t.me/laisbots')
-                          ]
-                      ),
-                      file=photo,  # Fotoğrafı ekleyin
-                      link_preview=False
-                      )
+    await send_help(event, "❤️ Merhaba Ben **Lais User Tagger**\n🏷 Gruplarda Kullanıcıları Etiketlemek İçin Tasarlandım. Butonları Kullanarak Botu Yönetebilirsin.")
 
 
 @client.on(events.callbackquery.CallbackQuery(data="etiket"))
-async def help(event):
+async def help_etiket(event):
     await send_help(event, "📮 Etiket Komutları:\n\n🕹 Komut: `/tag` \n📱Kullanım: `/tag (Yazı)` \n📄Açıklama: Üyeleri 5'li Şekilde Etiketlemek İçindir.\n\n🕹 Komut: `/tektag` \n📱Kullanım: `/tektag (Yazı)` \n📄Açıklama: Üyeleri Tekli Şekilde Etiketlemek İçindir.\n\n🕹 Komut: `/gecetag` \n📱Kullanım: `/gecetag` \n📄Açıklama: Üyeleri İyi Geceler Mesajıyla Etiketlemek İçindir.\n\n🕹 Komut: `/guntag` \n📱Kullanım: `/guntag` \n📄Açıklama: Üyeleri Günaydın Mesajı İle Etiketlemek İçindir.\n\n🕹 Komut: `/rtag` \n📱Kullanım: `/rtag` \n📄Açıklama: Üyeleri Random Sorularla Etiketlemek İçindir.\n\n🕹 Komut: `/ntag` \n📱Kullanım: `/ntag` \n📄Açıklama: Üyeleri Soru Sorarak Chete Çağırması İçindir.\n\n🕹 Komut: `/etag` \n📱Kullanım: `/etag (Yazı)` \n📄Açıklama: Üyeleri Emojili  Şekilde Etiketlemek İçindir.\n\n🕹 Komut: `/btag` \n📱Kullanım: `/btag (Yazı)` \n📄Açıklama: Üyeleri Bayrak Emojili Şekilde Etiketlemek İçindir.\n\n🕹 Komut: `/atag` \n📱Kullanım: `/atag` \n📄Açıklama: Gruptaki Yetkili Üyeleri 5 Saniye Arayla Etiketlemek İçin Kullanılır.\n\n🕹 Komut: `/cancel` \n📱Kullanım: `/cancel` \n📄Açıklama: Aktif Olan Etiketleme İşlemini Durdurmak İçin Kullanılır.")
 
 
 @client.on(events.callbackquery.CallbackQuery(data="help"))
-async def help(event):
+async def help_main(event):
     await send_help(event, "🕹 Komutlar\n\n`Bota Bulunan Komutlar.`", buttons=(
         [
             [Button.inline("📮 Etiket Komutları", data="etiket")],
@@ -90,12 +66,12 @@ async def help(event):
 
 
 @client.on(events.callbackquery.CallbackQuery(data="start"))
-async def help(event):
+async def help_start(event):
     await send_help(event, "❤️ Merhaba Ben **Lais User Tagger**\n🏷 Gruplarda Kullanıcıları Etiketlemek İçin Tasarlandım. Butonları Kullanarak Botu Yönetebilirsin.")
 
 
 @client.on(events.callbackquery.CallbackQuery(data="ek"))
-async def help(event):
+async def help_ek(event):
     await send_help(event, "⚙️ Ek Komutlar:\n\n🕹 Komut: `/slap` \n📄Açıklama: Gruptaki Yanıt Verilen Bir Üyeyi Trollemek İçin Kullanılır.\n\n🕹 Komut: `/bots` \n📄Açıklama: Botun Bulunduğu Gruptaki Botları Gösterir.\n\n🕹 Komut: `/grup` \n📄Açıklama: Grup Bilgilerini Gösterir.\n\n🕹 Komut: `/reload` \n📄Açıklama: Bot Anlamsızca Hata Veya Komutlara Cevap Vermese Botu Yeniler.\n\n🕹 Komut: `/id` \n📄Açıklama: İd Öğrenmenize Yardım Eder.\n\n🕹 Komut: `/arama` \n📄Açıklama: Google Üzerinden Arama Yapabilirsin (/arama Zeus-Pro).\n\n🕹 Komut: `/ping` \n📄Açıklama: Botun Bağlı Olduğu VPS'in Pingini Ölçün.\n\n🕹 Komut: `/eros` \n📄Açıklama: Gruptaki Herhangibi 2 Kişiyi Shipleyin.", buttons=(
         [
             [Button.inline("➡️ ɢᴇʀɪ", data="start")],
@@ -112,7 +88,6 @@ async def send_help(event, message, buttons=None):
 
     # Metni ve fotoğrafı birleştirerek gönder
     await event.edit(message, buttons=buttons, file=photo, link_preview=False)
-
 
 @client.on(events.NewMessage(pattern='^(?i)/cancel'))
 async def cancel(event):
