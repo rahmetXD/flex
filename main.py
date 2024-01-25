@@ -46,14 +46,16 @@ rxyzdev_initT = {}
 
 @client.on(events.NewMessage(pattern="^/start$"))
 async def start(event):
-  await event.reply("❤️ Merhaba Ben **Lais User Tagger**\n🏷 Gruplarda Kullanıcıları Etiketlemek İçin Tasarlandım. Butonları Kullanarak Botu Yönetebilirsin.",
-                    buttons=(                  
-		       
-                       [Button.inline("📚 Komutlar", data="help")],               
-                      [Button.url('📮 Beni Gruba Ekle', f"https://t.me/{bot_username}?startgroup=a")],
-		                  [Button.url(' 👨🏻‍💻 Developers', 'https://t.me/lusttqw')],
-		                  [Button.url('📣 Channel', 'https://t.me/laisbots')],
-
+    await event.reply("❤️ Merhaba Ben **Lais User Tagger**\n🏷 Gruplarda Kullanıcıları Etiketlemek İçin Tasarlandım. Butonları Kullanarak Botu Yönetebilirsin.",
+                    buttons=(
+                        [
+                            Button.inline("📚 Komutlar", data="help"),
+                            Button.url('📮 Beni Gruba Ekle', f"https://t.me/{bot_username}?startgroup=a")
+                        ],
+                        [
+                            Button.url('👨🏻‍💻 Developers', 'https://t.me/lusttqw'),
+                            Button.url('📣 Channel', 'https://t.me/laisbots')
+                        ]
                     ),
                     link_preview=False
                    )
