@@ -46,7 +46,17 @@ rxyzdev_initT = {}
 
 @client.on(events.NewMessage(pattern="^/start$"))
 async def start(event):
-    await event.reply("❤️ Merhaba Ben **Lais User Tagger**\n🏷 Gruplarda Kullanıcıları Etiketlemek İçin Tasarlandım. Butonları Kullanarak Botu Yönetebilirsin.",
+    # Gönderilecek metin
+    text = "❤️ Merhaba Ben **Lais User Tagger**\n🏷 Gruplarda Kullanıcıları Etiketlemek İçin Tasarlandım. Butonları Kullanarak Botu Yönetebilirsin."
+
+    # Gönderilecek fotoğraf
+    photo_path = "aynen.jpg"
+
+    # Fotoğrafı göndermeden önce server'a yükle
+    photo = await client.upload_file(photo_path)
+
+    # Metni ve fotoğrafı birleştirerek gönder
+    await event.reply(text,
                     buttons=(
                         [
                             Button.inline("📚 Komutlar", data="help"),
@@ -59,6 +69,7 @@ async def start(event):
                             Button.url('📣 Channel', 'https://t.me/laisbots')
                         ]
                     ),
+                    file=photo,  # Fotoğrafı ekleyin
                     link_preview=False
                    )
 
