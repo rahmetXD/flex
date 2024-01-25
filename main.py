@@ -11,7 +11,7 @@ from telethon.tl import types
 from telethon import Button
 import asyncio
 import ping3
-import quote
+from urllib.parse import quote
 
 logging.basicConfig(
     level=logging.INFO,
@@ -46,13 +46,13 @@ rxyzdev_initT = {}
 
 @client.on(events.NewMessage(pattern="^/start$"))
 async def start(event):
-  await event.reply("❤️ Merhaba Ben **Lais User Tagger*\n🏷 Gruplarda Kullanıcıları Etiketlemek İçin Tasarlandım. Butonları Kullanarak Botu Yönetebilirsin.",
+  await event.reply("❤️ Merhaba Ben **Lais User Tagger**\n🏷 Gruplarda Kullanıcıları Etiketlemek İçin Tasarlandım. Butonları Kullanarak Botu Yönetebilirsin.",
                     buttons=(                  
 		       
                        [Button.inline("📚 Komutlar", data="help")],               
                       [Button.url('📮 Beni Gruba Ekle', f"https://t.me/{bot_username}?startgroup=a")],
-		                  [Button.url(' 👨🏻‍💻 Developers', 'https://t.me/rahmetiNC')],
-		                  [Button.url('📣 Channel', 'https://t.me/rahmetiNC')],
+		                  [Button.url(' 👨🏻‍💻 Developers', 'https://t.me/lusttqw')],
+		                  [Button.url('📣 Channel', 'https://t.me/laisbots')],
 
                     ),
                     link_preview=False
@@ -84,12 +84,12 @@ async def help(event):
 
 @client.on(events.callbackquery.CallbackQuery(data="start"))
 async def help(event):
-    await event.edit(f"❤️ Merhaba Ben **Lais User Tagger*\n🏷 Gruplarda Kullanıcıları Etiketlemek İçin Tasarlandım. Butonları Kullanarak Botu Yönetebilirsin.", buttons=(                  
+    await event.edit(f"❤️ Merhaba Ben **Lais User Tagger**\n🏷 Gruplarda Kullanıcıları Etiketlemek İçin Tasarlandım. Butonları Kullanarak Botu Yönetebilirsin.", buttons=(                  
 		       
                        [Button.inline("📚 Komutlar", data="help")],               
                       [Button.url('📮 Beni Gruba Ekle', f"https://t.me/{bot_username}?startgroup=a")],
-		                  [Button.url(' 👨🏻‍💻 Developers', 'https://t.me/rahmetiNC')],
-		                  [Button.url('📣 Channel', 'https://t.me/rahmetiNC')],
+		                  [Button.url(' 👨🏻‍💻 Developers', 'https://t.me/lusttqw')],
+		                  [Button.url('📣 Channel', 'https://t.me/laisbots')],
 
                     ),
                     link_preview=False
